@@ -21,7 +21,7 @@ func webRoutes(r chi.Router, _ *sqlx.DB, env *EnvVars) {
 			return
 		}
 
-		chart, script := getChartParts(data)
+		chart, script := getLineChartParts(data)
 		w.Header().Set("Content-Type", "text/html; charset=utf-8")
 		HomePage("Homepage", r, env.IsProd, chart, script).Render(r.Context(), w)
 	})
@@ -34,7 +34,7 @@ func webRoutes(r chi.Router, _ *sqlx.DB, env *EnvVars) {
 			return
 		}
 
-		chart, script := getChartParts(data)
+		chart, script := getLineChartParts(data)
 		sse := datastar.NewSSE(w, r)
 		sse.PatchElementTempl(LineGraph(chart, script))
 	})

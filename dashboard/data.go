@@ -1,7 +1,6 @@
 package dashboard
 
 import (
-	"fmt"
 	"log/slog"
 	"net/http"
 	"os"
@@ -37,20 +36,18 @@ type HomepageViewModel struct {
 
 func getSensorData(webAddress string) ([]shared.SensorData, error) {
 	data := []shared.SensorData{}
-	if err := shared.CallWebsiteAPI("GET", webAddress, "", nil, &data); err != nil {
+	if err := shared.CallJsonAPI("GET", webAddress, "", nil, &data); err != nil {
 		return data, err
 	}
 	return data, nil
 }
 
-func getChartParts(data []shared.SensorData) (chartElement string, chartScript string) {
+func getLineChartParts(data []shared.SensorData) (chartElement string, chartScript string) {
 
 	times := []string{}
 	depths := make([]opts.LineData, 0)
 
 	for _, v := range data {
-
-		fmt.Println(v.Depth, v.Date.Format("3:04 PM"))
 		times = append(times, v.Date.Format("3:04 PM"))
 		depths = append(depths, opts.LineData{Value: v.Depth})
 	}

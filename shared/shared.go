@@ -49,7 +49,7 @@ func (s *Sensor) GetData() []SensorData {
 	return dataCopy
 }
 
-func CallWebsiteAPI(action string, endpointUrl string, apiKey string, payload io.Reader, result any) error {
+func CallJsonAPI(action string, endpointUrl string, apiKey string, payload io.Reader, result any) error {
 
 	req, err := http.NewRequest(action, endpointUrl, payload)
 
