@@ -1,0 +1,10 @@
+// .vscode/settings.json file
+{
+  "cssvar.files": ["./www/public/css/styles.css", "./www/public/css/main.css"],
+
+  // Do not ignore node_modules css files, which is ignored by default
+  "cssvar.ignore": [],
+
+  // add support for autocomplete in JS or JS like files
+  "cssvar.extensions": ["css", "postcss", "jsx", "tsx"]
+}

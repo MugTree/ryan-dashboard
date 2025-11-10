@@ -1,0 +1,13 @@
+bin/
+tmp/
+.env
+.env.**
+.DS_Store
+__debug_*
+node_modules
+data/*.db
+data/archive/
+data/*.sqlite*
+data/*.sqlite-*
+*_templ.go
+logs

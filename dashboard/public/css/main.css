@@ -1,0 +1,57 @@
+.pricing-plans {
+  display: flex;
+  gap: var(--size-4);
+}
+.pricing-plan {
+  flex-grow: 1;
+
+  display: flex;
+  flex-direction: column;
+  gap: var(--size-2);
+  justify-content: space-between;
+  border-radius: var(--radius-4);
+  padding: var(--size-6);
+  box-shadow: var(--shadow-1);
+}
+
+.pricing-plan > div {
+  display: flex;
+  flex-direction: column;
+  gap: var(--size-2);
+}
+.pricing-plan:hover {
+  box-shadow: var(--shadow-5);
+  transition: box-shadow 0.3s var(--ease-out-2);
+}
+@media (max-width: 768px) {
+  .pricing-plans {
+    flex-direction: column;
+    width: 100%;
+  }
+  .pricing-plan {
+    width: 100%;
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+}
+section + section {
+  margin-block: var(--size-12);
+}
+.feature + .feature {
+  margin-block-start: var(--size-8);
+}
+section {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: var(--size-4) var(--size-6);
+  gap: var(--size-4);
+}
+.hero,
+.cta {
+  min-block-size: 100vh;
+}
+.features {
+  justify-content: space-between;
+}

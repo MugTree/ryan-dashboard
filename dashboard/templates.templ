@@ -1,0 +1,102 @@
+package dashboard
+
+import (
+	// "github.com/starfederation/datastar-go/datastar"
+	"net/http"
+)
+
+
+templ Layout(title string, r *http.Request, isProd bool) {
+	<!DOCTYPE html>
+	<html>
+		<head>
+			{{ setAssetPaths(isProd) }}
+			<title>{ title }</title>
+			<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+			<script type="module" src={ dataStarPath }></script>
+			<link href={ bulmaCSSPath } rel="stylesheet"/>
+			<link href={ appCSSPath } rel="stylesheet"/>
+			<script src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"></script>
+		</head>
+		<body>
+			@MainMenu(r)
+			{ children... }
+			@Footer()
+		</body>
+	</html>
+}
+
+templ MainMenu(r *http.Request) {
+	<nav class="navbar is-success" data-signals="{burgerMenu: false}">
+		<div class="container">
+			<div class="navbar-brand">
+				//{ getUser(r.Context()).UserName }
+				<a aria-label="Go to our homepage" href="/">
+					<img
+						src="/img/logo2.png"
+						class="site-logo mt-4 mb-3 mr-6"
+						alt="Site logo"
+						width="296"
+						height="114"
+					/>
+				</a>
+				<a
+					role="button"
+					data-on:click="$burgerMenu = !$burgerMenu"
+					class="navbar-burger burger"
+					data-class:is-active="$burgerMenu"
+					aria-label="Toggle the mobile navigation"
+				>
+					<span aria-hidden="true"></span>
+					<span aria-hidden="true"></span>
+					<span aria-hidden="true"></span>
+					<span aria-hidden="true"></span>
+				</a>
+			</div>
+			<!-- alpine here -->
+			<div class="navbar-menu" data-class:is-active="$burgerMenu" id="mainnav">
+				<div class="navbar-start">
+					<a class="navbar-item" href="/about-us">About</a>
+					<a class="navbar-item" href="/contact-us">Contact</a>
+					<div class="navbar-item has-dropdown is-hoverable">
+						<a @click="regionMenu = !regionMenu" class="navbar-link navbar-link-regions is-arrowless">Toggle menu</a>
+						<div :class="regionMenu ? 'is-active' : 'is-hidden-touch'" class="navbar-dropdown-regions navbar-dropdown is-boxed ">
+							{{
+								type link struct {
+									Url  string
+									Name string
+								}
+								links := []link{{Url: "/blah", Name: "Some blah"}, {Url: "/blah", Name: "Some blah"}}
+							}}
+							for _, v := range links {
+								<a class="navbar-item" href={ templ.URL(v.Url) }>{ v.Name }</a>
+							}
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</nav>
+}
+
+templ Footer() {
+	<footer class="footer has-background-dark has-text-white">
+		<div class="container has-text-centered-mobile">
+			<span class="copyright has-text-white ">©2025 - Some site</span>
+		</div>
+	</footer>
+}
+
+templ HomePage(title string, r *http.Request, isProd bool, chart string, index int) {
+	@Layout(title, r, isProd) {
+		<main>
+			@LineGraph(chart, index)
+		</main>
+	}
+}
+
+
+templ LineGraph(chart string, index int) {
+	// <div id="time" data-on-interval__duration.5s="@patch('/api/charts/line/2')">@templ.Raw(chart)</div>
+	<div id="time">@templ.Raw(chart)</div>
+}
