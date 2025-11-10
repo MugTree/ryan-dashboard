@@ -87,16 +87,17 @@ templ Footer() {
 	</footer>
 }
 
-templ HomePage(title string, r *http.Request, isProd bool, chart string, index int) {
+templ HomePage(title string, r *http.Request, isProd bool, chartElement string, scriptElement string) {
 	@Layout(title, r, isProd) {
 		<main>
-			@LineGraph(chart, index)
+			@LineGraph(chartElement, scriptElement)
 		</main>
 	}
 }
 
 
-templ LineGraph(chart string, index int) {
+templ LineGraph(chartElement string, scriptElement string) {
 	// <div id="time" data-on-interval__duration.5s="@patch('/api/charts/line/2')">@templ.Raw(chart)</div>
-	<div id="time">@templ.Raw(chart)</div>
+	<div>@templ.Raw(chartElement)</div>
+	<div>@templ.Raw(scriptElement)</div>
 }

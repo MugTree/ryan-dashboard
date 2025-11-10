@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"math/rand/v2"
 	"net/http"
@@ -19,8 +20,8 @@ func main() {
 		for {
 			time.Sleep(5 * time.Second)
 			sd := shared.SensorData{
-				Depth:      rand.IntN(4) + 1,
-				DataSensed: time.Now(),
+				Depth: rand.IntN(4) + 1,
+				Date:  time.Now(),
 			}
 			sensor.AddData(sd)
 		}
@@ -37,11 +38,12 @@ func main() {
 
 		data := sensor.GetData()
 
-		fmt.Printf("items: %v", len(data))
-		fmt.Println()
-
-		for _, v := range data {
-			fmt.Printf("depth: %v time: %s\n", v.Depth, v.DataSensed.Format("2006-01-02 15:04:05"))
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(200)
+		err := json.NewEncoder(w).Encode(data)
+		if err != nil {
+			fmt.Printf("json encode error: %v", err)
+			http.Error(w, http.StatusText(http.StatusInternalServerError), 500)
 		}
 
 	})

@@ -3,7 +3,7 @@
 DOMAIN_NAME="somesite.co.uk"
 DB_NAME="database.sqlite"
 USER="portable@portable.cpp"
-REMOTE_DIRECTORY="/home/portable/www-template/www/"
+REMOTE_DIRECTORY="/home/portable/ryan-dashboard/www/"
 BACKUP_DIR="db_backups/"
 SERVICE_NAME="somesite.service"
 TIME_SLUG=$(date +%F_%T)

@@ -10,8 +10,8 @@ import (
 )
 
 type SensorData struct {
-	Depth      int       `db:"depth"`
-	DataSensed time.Time `db:"record_created"`
+	Depth int       `db:"depth" json:"depth"`
+	Date  time.Time `db:"date" json:"date"`
 }
 
 type Sensor struct {

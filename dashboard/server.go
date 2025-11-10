@@ -28,8 +28,9 @@ type Server struct {
 }
 
 type EnvVars struct {
-	IsProd      bool
-	LogLocation string
+	IsProd        bool
+	LogLocation   string
+	SensorAddress string
 }
 
 var ServerEnv EnvVars
@@ -86,9 +87,7 @@ func (s *Server) Start() error {
 		// front end no logging required
 		router.Group(func(r chi.Router) {
 
-			// This would be live in a real scenario
-			sensorData := getSensorData()
-			webRoutes(r, s.db, s.env, sensorData)
+			webRoutes(r, s.db, s.env)
 		})
 
 		router.NotFound(func(w http.ResponseWriter, r *http.Request) {

@@ -45,8 +45,9 @@ func run() error {
 	}
 
 	env := dashboard.EnvVars{
-		IsProd:      dashboard.MustEnvGetBool("IS_PRODUCTION"),
-		LogLocation: dashboard.MustEnv("APP_LOG"),
+		IsProd:        dashboard.MustEnvGetBool("IS_PRODUCTION"),
+		LogLocation:   dashboard.MustEnv("APP_LOG"),
+		SensorAddress: dashboard.MustEnv("SENSOR_ADDRESS"),
 	}
 
 	host := dashboard.MustEnv("HOST")

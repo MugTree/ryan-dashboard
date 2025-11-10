@@ -2,7 +2,7 @@
 DOMAIN_NAME="www.somesite.co.uk"
 PROJECT_NAME="somesite web application"
 CURRENT_DATE=$(date "+%F_%T")
-LOCAL_DIRECTORY="/Users/me/Developer/go-projects/www-template"
+LOCAL_DIRECTORY="/Users/me/Developer/go-projects/ryan-dashboard"
 REMOTE_DIRECTORY="/home/portable/somesite.co.uk/www"
 USER="portable@portable.cpp"
 HAS_UPLOADED=0

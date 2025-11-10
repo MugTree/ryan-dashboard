@@ -8,6 +8,9 @@ import (
 	"strconv"
 
 	"github.com/MugTree/ryan_dashboard/shared"
+	"github.com/go-echarts/go-echarts/v2/charts"
+	"github.com/go-echarts/go-echarts/v2/opts"
+	"github.com/go-echarts/go-echarts/v2/types"
 )
 
 const QueryParamsError = "query params error"
@@ -31,20 +34,56 @@ type HomepageViewModel struct {
 	Data []shared.SensorData
 }
 
-func paramMustBeNumeric(w http.ResponseWriter, r *http.Request, key string) (int, bool) {
-	v, err := strconv.Atoi(r.PathValue(key))
-	if err != nil {
-		logAndError(w, formatError(QueryParamsError, r, err))
-		return 0, false
+func getSensorData(webAddress string) ([]shared.SensorData, error) {
+	data := []shared.SensorData{}
+	if err := shared.CallWebsiteAPI("GET", webAddress, "", nil, &data); err != nil {
+
+		return data, err
 	}
 
-	if v == 0 {
-		logAndError(w, formatError(QueryParamsError, r, fmt.Errorf("key '%v' not numeric - %v", key, v)))
-		return 0, false
-	}
-
-	return v, true
+	return data, nil
 }
+
+func getChartParts(data []shared.SensorData) (chartElement string, chartScript string) {
+
+	times := []string{}
+	depths := make([]opts.LineData, 0)
+
+	for _, v := range data {
+
+		fmt.Println(v.Depth, v.Date.Format("3:04 PM"))
+		times = append(times, v.Date.Format("3:04 PM"))
+		depths = append(depths, opts.LineData{Value: v.Depth})
+	}
+
+	line := charts.NewLine()
+
+	line.SetGlobalOptions(
+		charts.WithInitializationOpts(opts.Initialization{Theme: types.ThemeWesteros}),
+		charts.WithTitleOpts(opts.Title{
+			Title:    "Line title",
+			Subtitle: "Sub",
+		}))
+
+	chart := line.SetXAxis(times).AddSeries("depths", depths).RenderSnippet()
+	return chart.Element, chart.Script + chart.Option
+
+}
+
+// func paramMustBeNumeric(w http.ResponseWriter, r *http.Request, key string) (int, bool) {
+// 	v, err := strconv.Atoi(r.PathValue(key))
+// 	if err != nil {
+// 		logAndError(w, formatError(QueryParamsError, r, err))
+// 		return 0, false
+// 	}
+
+// 	if v == 0 {
+// 		logAndError(w, formatError(QueryParamsError, r, fmt.Errorf("key '%v' not numeric - %v", key, v)))
+// 		return 0, false
+// 	}
+
+// 	return v, true
+// }
 
 // func paramMustBeNotEmpty(w http.ResponseWriter, r *http.Request, key string) (string, bool) {
 // 	v := r.PathValue(key)

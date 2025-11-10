@@ -5,7 +5,7 @@ DB_NAME="database.sqlite"
 USER="portable@portable.cpp"
 REMOTE_DIRECTORY="/home/portable/somesite.co.uk/www/"
 BACKUP_DIR="db_backups/"
-LOCAL_DIRECTORY="/Users/me/Developer/go-projects/www-template/data/archive/"
+LOCAL_DIRECTORY="/Users/me/Developer/go-projects/ryan-dashboard/data/archive/"
 SERVICE_NAME="somesite.service"
 TIME_SLUG=$(date +%F_%T)
 
