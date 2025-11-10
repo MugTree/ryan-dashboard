@@ -17,6 +17,7 @@ const QueryParamsError = "query params error"
 const BadDataError = "bad data error"
 const SqlError = "sql error"
 const JsonError = "json error"
+const SensorApiError = "sensor api error"
 
 const NoPageToEdit int64 = 0
 
@@ -37,10 +38,8 @@ type HomepageViewModel struct {
 func getSensorData(webAddress string) ([]shared.SensorData, error) {
 	data := []shared.SensorData{}
 	if err := shared.CallWebsiteAPI("GET", webAddress, "", nil, &data); err != nil {
-
 		return data, err
 	}
-
 	return data, nil
 }
 
