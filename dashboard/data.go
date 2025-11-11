@@ -20,7 +20,7 @@ const SensorApiError = "sensor api error"
 
 const NoPageToEdit int64 = 0
 
-const AssetsPathDev = "./www/public/"
+const AssetsPathDev = "./dashboard/public/"
 const AssetsPathProd = "/"
 const DateLayout string = "2006-01-02 15:04:05"
 
@@ -42,7 +42,7 @@ func getSensorData(webAddress string) ([]shared.SensorData, error) {
 	return data, nil
 }
 
-func getLineChartParts(data []shared.SensorData) (chartElement string, chartScript string) {
+func getLineChartParts(data []shared.SensorData, chartID string) (element string, script string, option string) {
 
 	times := []string{}
 	depths := make([]opts.LineData, 0)
@@ -55,14 +55,15 @@ func getLineChartParts(data []shared.SensorData) (chartElement string, chartScri
 	line := charts.NewLine()
 
 	line.SetGlobalOptions(
-		charts.WithInitializationOpts(opts.Initialization{Theme: types.ThemeWesteros}),
+		charts.WithInitializationOpts(opts.Initialization{Theme: types.ThemeWesteros, ChartID: chartID}),
 		charts.WithTitleOpts(opts.Title{
 			Title:    "Line title",
 			Subtitle: "Sub",
 		}))
 
 	chart := line.SetXAxis(times).AddSeries("depths", depths).RenderSnippet()
-	return chart.Element, chart.Script + chart.Option
+
+	return chart.Element, chart.Script, chart.Option
 
 }
 

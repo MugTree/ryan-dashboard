@@ -1,11 +1,8 @@
 package dashboard
 
-import (
-	// "github.com/starfederation/datastar-go/datastar"
-	"net/http"
-)
+import "net/http"
 
-
+// "github.com/starfederation/datastar-go/datastar"
 templ Layout(title string, r *http.Request, isProd bool) {
 	<!DOCTYPE html>
 	<html>
@@ -87,17 +84,34 @@ templ Footer() {
 	</footer>
 }
 
-templ HomePage(title string, r *http.Request, isProd bool, chartElement string, scriptElement string) {
+templ HomePage(title string, r *http.Request, isProd bool, chart string, script string, htmlSelector string) {
 	@Layout(title, r, isProd) {
 		<main>
-			@LineGraph(chartElement, scriptElement)
+			@LineGraph(chart, script, htmlSelector)
 		</main>
 	}
 }
 
+templ LineGraph(chart string, script string, htmlSelector string) {
+	<div id="script-element">
+		@templ.Raw(chart)
+		@templ.Raw(script)
+		<script type="module">
+				const chartEl = document.querySelector({{htmlSelector}});
+				const chart = echarts.getInstanceByDom(chartEl);
+				async function updateChart() {
+					try {
+						const url = "http://localhost:8080/api/charts/line"
+						const res = await fetch(url);
+						const json = await res.json()
+						
+						 chart.setOption(json, true);
+					} catch (err) {
 
-templ LineGraph(chartElement string, scriptElement string) {
-	// <div id="time" data-on-interval__duration.5s="@patch('/api/charts/line/2')">@templ.Raw(chart)</div>
-	<div>@templ.Raw(chartElement)</div>
-	<div>@templ.Raw(scriptElement)</div>
+						console.log(err)
+					}
+				}
+				 setInterval(updateChart, 500)
+			</script>
+	</div>
 }
