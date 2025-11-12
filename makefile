@@ -1,8 +1,8 @@
 build-www:
-	go build -o bin/ryan_dashboard.app ./cmd/dashboard
+	go build -o bin/ryan_dashboard ./cmd/dashboard
 
 production-build-www:
-	GOOS=linux GOARCH=amd64  go build -o bin/ryan_dashboard.app.amd64 ./cmd/dashboard
+	GOOS=linux GOARCH=amd64  go build -o bin/ryan_dashboard.amd64 ./cmd/dashboard
 
 start-dev: tmp 
 	make -j 3  templ serve sync_assets

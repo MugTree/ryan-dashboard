@@ -84,15 +84,19 @@ templ Footer() {
 	</footer>
 }
 
-templ HomePage(title string, r *http.Request, isProd bool, chart string, script string, htmlSelector string, apiUrl string) {
-	@Layout(title, r, isProd) {
+templ HomePage(r *http.Request, isProd bool, comp templ.Component ) {
+	@Layout("Homepage", r, isProd) {
 		<main>
-			@LineGraph(chart, script, htmlSelector, apiUrl)
+			@comp
 		</main>
 	}
 }
 
-templ LineGraph(chartHtml string, chartScript string, htmlSelector string, apiUrl string) {
+templ DummyComp() {
+	<div>hey</div>
+}
+
+templ LineGraphLiveData(chartHtml string, chartScript string, htmlSelector string, apiUrl string) {
 		@templ.Raw(chartHtml)
 		@templ.Raw(chartScript)
 		<script type="module">

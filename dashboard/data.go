@@ -1,14 +1,11 @@
 package dashboard
 
 import (
-	"log/slog"
-	"net/http"
-	"os"
-	"strconv"
-
 	"github.com/MugTree/ryan_dashboard/shared"
+	"github.com/a-h/templ"
 	"github.com/go-echarts/go-echarts/v2/charts"
 	"github.com/go-echarts/go-echarts/v2/opts"
+	"github.com/go-echarts/go-echarts/v2/render"
 	"github.com/go-echarts/go-echarts/v2/types"
 )
 
@@ -24,25 +21,7 @@ const AssetsPathDev = "./dashboard/public/"
 const AssetsPathProd = "/"
 const DateLayout string = "2006-01-02 15:04:05"
 
-type BaseViewModel struct {
-	Request *http.Request
-	IsProd  bool
-}
-
-type HomepageViewModel struct {
-	BaseViewModel
-	Data []shared.SensorData
-}
-
-func getSensorData(webAddress string) ([]shared.SensorData, error) {
-	data := []shared.SensorData{}
-	if err := shared.CallJsonAPI("GET", webAddress, "", nil, &data); err != nil {
-		return data, err
-	}
-	return data, nil
-}
-
-func getLineChartParts(data []shared.SensorData, chartID string) (element string, script string, option string) {
+func getLiveDepthsChartSnippet(data []shared.SensorData, chartId string) render.ChartSnippet {
 
 	times := []string{}
 	depths := make([]opts.LineData, 0)
@@ -56,20 +35,30 @@ func getLineChartParts(data []shared.SensorData, chartID string) (element string
 
 	line.SetGlobalOptions(
 		charts.WithAnimation(false),
-		charts.WithInitializationOpts(opts.Initialization{Theme: types.ChartLine, ChartID: chartID}),
+		charts.WithInitializationOpts(opts.Initialization{Width: "600px", Height: "300px", Theme: types.ChartLine, ChartID: chartId}),
 		charts.WithYAxisOpts(opts.YAxis{
 			Max: 6,
 			Min: 1,
 		}),
 		charts.WithTitleOpts(opts.Title{
-			Title:    "Line title",
-			Subtitle: "Sub",
+			Title:    "Some data from a sensor",
+			Subtitle: "just to illustrate",
 		}))
 
-	chart := line.SetXAxis(times).AddSeries("depths", depths).RenderSnippet()
+	return line.SetXAxis(times).AddSeries("depths", depths).RenderSnippet()
+}
 
-	return chart.Element, chart.Script, chart.Option
+func getLineGraphLiveDataComponent(data []shared.SensorData, id string) (templ.Component, error) {
+	chart := getLiveDepthsChartSnippet(data, id)
+	return LineGraphLiveData(chart.Element, chart.Script, "#"+id, "/api/charts/line"), nil
+}
 
+func getSensorData(webAddress string) ([]shared.SensorData, error) {
+	data := []shared.SensorData{}
+	if err := shared.CallJsonAPI("GET", webAddress, "", nil, &data); err != nil {
+		return data, err
+	}
+	return data, nil
 }
 
 // func paramMustBeNumeric(w http.ResponseWriter, r *http.Request, key string) (int, bool) {
@@ -95,30 +84,3 @@ func getLineChartParts(data []shared.SensorData, chartID string) (element string
 // 	}
 // 	return v, true
 // }
-
-func MustEnv(name string) string {
-	v, ok := os.LookupEnv(name)
-	if !ok {
-		slog.Error("Missing required environment variable", "var", name)
-		os.Exit(1)
-	}
-	return v
-}
-
-func MustEnvGetBool(name string) bool {
-
-	v := MustEnv(name)
-
-	if v != "true" && v != "false" {
-		slog.Error("env requires 'true'  or 'false' lowercase variable name", "var", name)
-		os.Exit(1)
-	}
-
-	val, err := strconv.ParseBool(v)
-	if err != nil {
-		slog.Error("env can't convert value to a bool", "var", name)
-		os.Exit(1)
-	}
-
-	return val
-}

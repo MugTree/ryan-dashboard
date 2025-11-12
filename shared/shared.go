@@ -4,7 +4,10 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"log/slog"
 	"net/http"
+	"os"
+	"strconv"
 	"sync"
 	"time"
 )
@@ -71,4 +74,31 @@ func CallJsonAPI(action string, endpointUrl string, apiKey string, payload io.Re
 
 	return err
 
+}
+
+func MustEnv(name string) string {
+	v, ok := os.LookupEnv(name)
+	if !ok {
+		slog.Error("Missing required environment variable", "var", name)
+		os.Exit(1)
+	}
+	return v
+}
+
+func MustEnvGetBool(name string) bool {
+
+	v := MustEnv(name)
+
+	if v != "true" && v != "false" {
+		slog.Error("env requires 'true'  or 'false' lowercase variable name", "var", name)
+		os.Exit(1)
+	}
+
+	val, err := strconv.ParseBool(v)
+	if err != nil {
+		slog.Error("env can't convert value to a bool", "var", name)
+		os.Exit(1)
+	}
+
+	return val
 }

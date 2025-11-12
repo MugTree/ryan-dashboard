@@ -8,6 +8,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/MugTree/ryan_dashboard/shared"
 	"github.com/jmoiron/sqlx"
 	"github.com/joho/godotenv"
 	_ "modernc.org/sqlite"
@@ -19,12 +20,12 @@ func TestServer_Start(t *testing.T) {
 
 		err := godotenv.Load("../.env")
 		env := EnvVars{
-			IsProd:      MustEnvGetBool("IS_PRODUCTION"),
-			LogLocation: MustEnv("APP_LOG"),
+			IsProd:      shared.MustEnvGetBool("IS_PRODUCTION"),
+			LogLocation: shared.MustEnv("APP_LOG"),
 		}
 
-		host := MustEnv("HOST_TESTING")
-		dbPath := MustEnv("DB")
+		host := shared.MustEnv("HOST_TESTING")
+		dbPath := shared.MustEnv("DB")
 		if err != nil {
 			panic(err)
 		}

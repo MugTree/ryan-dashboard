@@ -86,13 +86,13 @@ func (s *Server) Start() error {
 
 		// front end no logging required
 		router.Group(func(r chi.Router) {
-
 			webRoutes(r, s.db, s.env)
 		})
 
 		router.NotFound(func(w http.ResponseWriter, r *http.Request) {
 			w.WriteHeader(404)
 			w.Write([]byte("route does not exist"))
+			slog.Info("route does not exist" + r.URL.Path)
 		})
 
 	})

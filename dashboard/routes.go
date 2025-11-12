@@ -20,19 +20,13 @@ func webRoutes(r chi.Router, _ *sqlx.DB, env *EnvVars) {
 			return
 		}
 
-		chartId := "depths_chart"
-		chart, script, _ := getLineChartParts(data, chartId)
-		w.Header().Set("Content-Type", "text/html; charset=utf-8")
+		ldComp, err := getLineGraphLiveDataComponent(data, "depths_chart")
 
-		HomePage(
-			"Homepage",
-			r,
-			env.IsProd,
-			chart,
-			script,
-			"#"+chartId,
-			"/api/charts/line",
-		).Render(r.Context(), w)
+		if err != nil {
+			logAndError(w, formatError(BadDataError, r, err))
+		}
+
+		HomePage(r, env.IsProd, ldComp).Render(r.Context(), w)
 	})
 
 	r.Get("/api/charts/line", func(w http.ResponseWriter, r *http.Request) {
@@ -43,10 +37,9 @@ func webRoutes(r chi.Router, _ *sqlx.DB, env *EnvVars) {
 			return
 		}
 
-		chartId := "depths_chart"
-		_, _, option := getLineChartParts(data, chartId)
+		chart := getLiveDepthsChartSnippet(data, "depths_chart")
 
 		w.Header().Set("Content-Type", "application/json")
-		w.Write([]byte(option))
+		w.Write([]byte(chart.Option))
 	})
 }

@@ -9,6 +9,7 @@ import (
 	"syscall"
 
 	"github.com/MugTree/ryan_dashboard/dashboard"
+	"github.com/MugTree/ryan_dashboard/shared"
 
 	_ "embed"
 
@@ -45,13 +46,13 @@ func run() error {
 	}
 
 	env := dashboard.EnvVars{
-		IsProd:        dashboard.MustEnvGetBool("IS_PRODUCTION"),
-		LogLocation:   dashboard.MustEnv("APP_LOG"),
-		SensorAddress: dashboard.MustEnv("SENSOR_ADDRESS"),
+		IsProd:        shared.MustEnvGetBool("IS_PRODUCTION"),
+		LogLocation:   shared.MustEnv("APP_LOG"),
+		SensorAddress: shared.MustEnv("SENSOR_ADDRESS"),
 	}
 
-	host := dashboard.MustEnv("HOST")
-	dbPath := dashboard.MustEnv("DB")
+	host := shared.MustEnv("HOST")
+	dbPath := shared.MustEnv("DB")
 
 	rotator := &lumberjack.Logger{
 		Filename:   env.LogLocation,
