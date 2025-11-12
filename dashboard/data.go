@@ -48,14 +48,19 @@ func getLineChartParts(data []shared.SensorData, chartID string) (element string
 	depths := make([]opts.LineData, 0)
 
 	for _, v := range data {
-		times = append(times, v.Date.Format("3:04 PM"))
+		times = append(times, v.Date.Format("15:04 05s"))
 		depths = append(depths, opts.LineData{Value: v.Depth})
 	}
 
 	line := charts.NewLine()
 
 	line.SetGlobalOptions(
-		charts.WithInitializationOpts(opts.Initialization{Theme: types.ThemeWesteros, ChartID: chartID}),
+		charts.WithAnimation(false),
+		charts.WithInitializationOpts(opts.Initialization{Theme: types.ChartLine, ChartID: chartID}),
+		charts.WithYAxisOpts(opts.YAxis{
+			Max: 6,
+			Min: 1,
+		}),
 		charts.WithTitleOpts(opts.Title{
 			Title:    "Line title",
 			Subtitle: "Sub",

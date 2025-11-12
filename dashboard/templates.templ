@@ -84,34 +84,30 @@ templ Footer() {
 	</footer>
 }
 
-templ HomePage(title string, r *http.Request, isProd bool, chart string, script string, htmlSelector string) {
+templ HomePage(title string, r *http.Request, isProd bool, chart string, script string, htmlSelector string, apiUrl string) {
 	@Layout(title, r, isProd) {
 		<main>
-			@LineGraph(chart, script, htmlSelector)
+			@LineGraph(chart, script, htmlSelector, apiUrl)
 		</main>
 	}
 }
 
-templ LineGraph(chart string, script string, htmlSelector string) {
-	<div id="script-element">
-		@templ.Raw(chart)
-		@templ.Raw(script)
+templ LineGraph(chartHtml string, chartScript string, htmlSelector string, apiUrl string) {
+		@templ.Raw(chartHtml)
+		@templ.Raw(chartScript)
 		<script type="module">
-				const chartEl = document.querySelector({{htmlSelector}});
-				const chart = echarts.getInstanceByDom(chartEl);
-				async function updateChart() {
-					try {
-						const url = "http://localhost:8080/api/charts/line"
-						const res = await fetch(url);
-						const json = await res.json()
-						
-						 chart.setOption(json, true);
-					} catch (err) {
-
-						console.log(err)
-					}
+			const chartEl = document.querySelector({{htmlSelector}});
+			const chart = echarts.getInstanceByDom(chartEl);
+			
+			async function updateChart() {
+				try {
+					const res = await fetch({{apiUrl}});
+					const json = await res.json()
+					chart.setOption(json, true);
+				} catch (err) {
+					console.log(err)
 				}
-				 setInterval(updateChart, 500)
-			</script>
-	</div>
+			}
+			setInterval(updateChart, 100)
+		</script>
 }

@@ -14,13 +14,14 @@ var sensor shared.Sensor
 
 func main() {
 
-	sensor = shared.NewSensor(10)
+	maxSize := 10
+	sensor = shared.NewSensor(maxSize)
 
 	go func() {
 		for {
-			time.Sleep(5 * time.Second)
+			time.Sleep(500 * time.Millisecond)
 			sd := shared.SensorData{
-				Depth: rand.IntN(4) + 1,
+				Depth: rand.IntN(6) + 1,
 				Date:  time.Now(),
 			}
 			sensor.AddData(sd)
