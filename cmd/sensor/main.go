@@ -13,7 +13,6 @@ import (
 
 	"github.com/MugTree/ryan_dashboard/shared"
 	"github.com/joho/godotenv"
-	"gopkg.in/natefinch/lumberjack.v2"
 )
 
 /*
@@ -38,21 +37,12 @@ func run() error {
 
 	host := shared.MustEnv("SENSOR_HOST")
 
-	rotator := &lumberjack.Logger{
-		Filename:   shared.MustEnv("SENSOR_LOG"),
-		MaxSize:    50, // MB
-		MaxBackups: 5,
-		MaxAge:     30, // days
-		Compress:   true,
-	}
-	defer rotator.Close()
-
 	const (
 		updateInterval = 100 * time.Millisecond // 10th of a second
 		windowSeconds  = 10
 	)
 	pointsPerSecond := int(time.Second / updateInterval)
-	maxPoints := pointsPerSecond * windowSeconds // 100 Hz × 10 s = 1000 points
+	maxPoints := pointsPerSecond * windowSeconds
 
 	sensor := shared.NewSensor(maxPoints)
 
@@ -62,6 +52,7 @@ func run() error {
 			t := time.Since(start).Seconds()
 
 			//CGPT Smooth oscillation with small noise
+			// give an impression of 60 percent cpu useish
 			y := 60 + 10*math.Sin(t/2) + (rand.Float64()*4 - 2)
 
 			sensor.AddData(shared.MemorySample{
