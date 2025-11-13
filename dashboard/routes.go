@@ -5,12 +5,11 @@ import (
 	"net/http"
 
 	"github.com/go-chi/chi/v5"
-	"github.com/jmoiron/sqlx"
 )
 
 var sensorApiErrStr = "error calling sensor api: %v"
 
-func webRoutes(r chi.Router, _ *sqlx.DB, env *EnvVars) {
+func webRoutes(r chi.Router, env *EnvVars) {
 
 	r.Get("/", func(w http.ResponseWriter, r *http.Request) {
 
@@ -20,13 +19,12 @@ func webRoutes(r chi.Router, _ *sqlx.DB, env *EnvVars) {
 			return
 		}
 
-		ldComp, err := getLineGraphLiveDataComponent(data, "depths_chart")
-
+		chartComponent, err := getSystemMemoryComponent(data, "depths_chart")
 		if err != nil {
 			logAndError(w, formatError(BadDataError, r, err))
 		}
 
-		HomePage(r, env.IsProd, ldComp).Render(r.Context(), w)
+		HomePage(r, env.IsProd, chartComponent).Render(r.Context(), w)
 	})
 
 	r.Get("/api/charts/line", func(w http.ResponseWriter, r *http.Request) {
@@ -37,9 +35,17 @@ func webRoutes(r chi.Router, _ *sqlx.DB, env *EnvVars) {
 			return
 		}
 
-		chart := getLiveDepthsChartSnippet(data, "depths_chart")
+		chartData := getSystemMemoryChartData(data, "depths_chart")
 
 		w.Header().Set("Content-Type", "application/json")
-		w.Write([]byte(chart.Option))
+
+		fmt.Println("---------------------------------")
+		fmt.Println(chartData.Option)
+		fmt.Println("---------------------------------")
+		w.Write([]byte(chartData.Option))
+	})
+
+	r.Get("/health", func(w http.ResponseWriter, r *http.Request) {
+		w.Write([]byte("<!DOCTYPE html><html><head><title>health</title></head><body></body></html>"))
 	})
 }

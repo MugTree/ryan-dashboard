@@ -5,6 +5,7 @@ go 1.24.3
 require (
 	github.com/a-h/templ v0.3.960
 	github.com/go-echarts/go-echarts/v2 v2.6.7
+	github.com/goforj/godump v1.6.0
 )
 
 require (

@@ -7,6 +7,7 @@ import (
 	"github.com/go-echarts/go-echarts/v2/opts"
 	"github.com/go-echarts/go-echarts/v2/render"
 	"github.com/go-echarts/go-echarts/v2/types"
+	"github.com/goforj/godump"
 )
 
 const QueryParamsError = "query params error"
@@ -21,40 +22,77 @@ const AssetsPathDev = "./dashboard/public/"
 const AssetsPathProd = "/"
 const DateLayout string = "2006-01-02 15:04:05"
 
-func getLiveDepthsChartSnippet(data []shared.SensorData, chartId string) render.ChartSnippet {
-
-	times := []string{}
-	depths := make([]opts.LineData, 0)
-
-	for _, v := range data {
-		times = append(times, v.Date.Format("15:04 05s"))
-		depths = append(depths, opts.LineData{Value: v.Depth})
+func getSystemMemoryChartData(data []shared.MemorySample, chartId string) render.ChartSnippet {
+	if len(data) == 0 {
+		return render.ChartSnippet{}
 	}
 
-	line := charts.NewLine()
+	//
+	ref := data[len(data)-1].Time
+	points := make([]opts.LineData, 0, len(data))
 
+	for _, v := range data {
+		x := -ref.Sub(v.Time).Seconds() // seconds ago (negative = older)
+		points = append(points, opts.LineData{
+			Value: [2]any{x, v.MemoryPercent}, // [x,y] pair for numeric X
+		})
+	}
+
+	godump.Dump(points)
+
+	line := charts.NewLine()
 	line.SetGlobalOptions(
 		charts.WithAnimation(false),
-		charts.WithInitializationOpts(opts.Initialization{Width: "600px", Height: "300px", Theme: types.ChartLine, ChartID: chartId}),
+		charts.WithInitializationOpts(opts.Initialization{
+			Width:   "900px",
+			Height:  "600px",
+			Theme:   types.ThemeChalk,
+			ChartID: chartId,
+		}),
+		charts.WithXAxisOpts(opts.XAxis{
+			Type: "value",
+			Name: "Seconds ago",
+			Min:  -10,
+			Max:  0,
+			AxisLabel: &opts.AxisLabel{
+				Formatter: "{value}s",
+			},
+		}),
 		charts.WithYAxisOpts(opts.YAxis{
-			Max: 6,
-			Min: 1,
+			Name:      "Memory usage (%)",
+			AxisLabel: &opts.AxisLabel{Rotate: 90},
+			Max:       100,
+			Min:       0,
 		}),
 		charts.WithTitleOpts(opts.Title{
-			Title:    "Some data from a sensor",
-			Subtitle: "just to illustrate",
-		}))
+			Title:    "System Memory Usage (last few seconds)",
+			Subtitle: "from some remote system",
+		}),
+	)
 
-	return line.SetXAxis(times).AddSeries("depths", depths).RenderSnippet()
+	// Note: no SetXAxis(...) call — X values come from [2] pairs above.
+	line.AddSeries("Memory %", points).
+		SetSeriesOptions(
+			charts.WithLineChartOpts(opts.LineChart{
+				Smooth:     opts.Bool(false), // curved line
+				ShowSymbol: opts.Bool(false), // no point markers
+			}),
+			charts.WithAreaStyleOpts(opts.AreaStyle{
+				Opacity: opts.Float(0.4),
+				Color:   "rgba(0, 255, 128, 0.5)", // semi-transparent green
+			}),
+		)
+
+	return line.RenderSnippet()
 }
 
-func getLineGraphLiveDataComponent(data []shared.SensorData, id string) (templ.Component, error) {
-	chart := getLiveDepthsChartSnippet(data, id)
-	return LineGraphLiveData(chart.Element, chart.Script, "#"+id, "/api/charts/line"), nil
+func getSystemMemoryComponent(data []shared.MemorySample, id string) (templ.Component, error) {
+	chart := getSystemMemoryChartData(data, id)
+	return SystemMemory(chart.Element, chart.Script, "#"+id, "/api/charts/line"), nil
 }
 
-func getSensorData(webAddress string) ([]shared.SensorData, error) {
-	data := []shared.SensorData{}
+func getSensorData(webAddress string) ([]shared.MemorySample, error) {
+	data := []shared.MemorySample{}
 	if err := shared.CallJsonAPI("GET", webAddress, "", nil, &data); err != nil {
 		return data, err
 	}

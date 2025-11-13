@@ -17,12 +17,10 @@ import (
 	"github.com/MugTree/ryan_dashboard/dashboard/public"
 
 	"github.com/go-chi/chi/v5"
-	"github.com/jmoiron/sqlx"
 )
 
 type Server struct {
 	env    *EnvVars
-	db     *sqlx.DB
 	mux    chi.Router
 	server *http.Server
 }
@@ -35,13 +33,12 @@ type EnvVars struct {
 
 var ServerEnv EnvVars
 
-func NewServer(db *sqlx.DB, address string, env *EnvVars) *Server {
+func NewServer(address string, env *EnvVars) *Server {
 
 	mux := chi.NewMux()
 
 	return &Server{
 		env: env,
-		db:  db,
 		mux: mux,
 		server: &http.Server{
 			Addr:              address,
@@ -66,27 +63,9 @@ func (s *Server) Start() error {
 			setStaticAssests(r, s.env.IsProd)
 		})
 
-		// api calls
-		// router.Group(func(r chi.Router) {
-		// 	r.Use(headerAuthMiddleware(s.env.JsonApiKey))
-		// 	apiRoutes(r, s.db)
-		// })
-
-		// admin, dasboard - login required
-		// router.Group(func(r chi.Router) {
-		// 	r.Use(cookieAuthMiddleware(true))
-		// 	adminRoutes(r, s.db, s.env)
-		// })
-
-		// front end admin tasks where we require a logged in user
-		// router.Group(func(r chi.Router) {
-		// 	r.Use(cookieAuthMiddleware(true))
-		// 	webAdminRoutes(r, s.db)
-		// })
-
 		// front end no logging required
 		router.Group(func(r chi.Router) {
-			webRoutes(r, s.db, s.env)
+			webRoutes(r, s.env)
 		})
 
 		router.NotFound(func(w http.ResponseWriter, r *http.Request) {

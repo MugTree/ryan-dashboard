@@ -13,7 +13,6 @@ import (
 
 	_ "embed"
 
-	"github.com/jmoiron/sqlx"
 	"github.com/joho/godotenv"
 	"golang.org/x/sync/errgroup"
 	_ "modernc.org/sqlite"
@@ -52,7 +51,6 @@ func run() error {
 	}
 
 	host := shared.MustEnv("HOST")
-	dbPath := shared.MustEnv("DB")
 
 	rotator := &lumberjack.Logger{
 		Filename:   env.LogLocation,
@@ -70,19 +68,7 @@ func run() error {
 	ctx, stop := signal.NotifyContext(context.Background(), syscall.SIGTERM, syscall.SIGINT)
 	defer stop()
 
-	db, err := sqlx.Open("sqlite", dbPath)
-	if err != nil {
-		return fmt.Errorf("failed to open database: %v", err)
-	}
-
-	defer db.Close()
-
-	_, err = db.Exec("PRAGMA foreign_keys = ON; PRAGMA journal_mode = WAL;")
-	if err != nil {
-		return fmt.Errorf("failed to enable foreign keys or wal mode: %v ", err)
-	}
-
-	s := dashboard.NewServer(db, host, &env)
+	s := dashboard.NewServer(host, &env)
 
 	// Use an errgroup to wait for separate goroutines which can error
 	eg, ctx := errgroup.WithContext(ctx)

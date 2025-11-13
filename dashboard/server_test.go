@@ -9,7 +9,6 @@ import (
 	"time"
 
 	"github.com/MugTree/ryan_dashboard/shared"
-	"github.com/jmoiron/sqlx"
 	"github.com/joho/godotenv"
 	_ "modernc.org/sqlite"
 )
@@ -25,7 +24,6 @@ func TestServer_Start(t *testing.T) {
 		}
 
 		host := shared.MustEnv("HOST_TESTING")
-		dbPath := shared.MustEnv("DB")
 		if err != nil {
 			panic(err)
 		}
@@ -37,14 +35,7 @@ func TestServer_Start(t *testing.T) {
 		Db setup
 		*/
 
-		db, err := sqlx.Open("sqlite", dbPath)
-		if err != nil {
-			t.Errorf("error creating database: %v", err)
-		}
-
-		defer db.Close()
-
-		s := NewServer(db, host, &env)
+		s := NewServer(host, &env)
 
 		go func() {
 			err := s.Start()

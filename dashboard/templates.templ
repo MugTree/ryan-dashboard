@@ -32,7 +32,7 @@ templ MainMenu(r *http.Request) {
 					<img
 						src="/img/logo2.png"
 						class="site-logo mt-4 mb-3 mr-6"
-						alt="Site logo"
+						alt="Site log"
 						width="296"
 						height="114"
 					/>
@@ -50,26 +50,10 @@ templ MainMenu(r *http.Request) {
 					<span aria-hidden="true"></span>
 				</a>
 			</div>
-			<!-- alpine here -->
 			<div class="navbar-menu" data-class:is-active="$burgerMenu" id="mainnav">
 				<div class="navbar-start">
 					<a class="navbar-item" href="/about-us">About</a>
 					<a class="navbar-item" href="/contact-us">Contact</a>
-					<div class="navbar-item has-dropdown is-hoverable">
-						<a @click="regionMenu = !regionMenu" class="navbar-link navbar-link-regions is-arrowless">Toggle menu</a>
-						<div :class="regionMenu ? 'is-active' : 'is-hidden-touch'" class="navbar-dropdown-regions navbar-dropdown is-boxed ">
-							{{
-								type link struct {
-									Url  string
-									Name string
-								}
-								links := []link{{Url: "/blah", Name: "Some blah"}, {Url: "/blah", Name: "Some blah"}}
-							}}
-							for _, v := range links {
-								<a class="navbar-item" href={ templ.URL(v.Url) }>{ v.Name }</a>
-							}
-						</div>
-					</div>
 				</div>
 			</div>
 		</div>
@@ -84,7 +68,7 @@ templ Footer() {
 	</footer>
 }
 
-templ HomePage(r *http.Request, isProd bool, comp templ.Component ) {
+templ HomePage(r *http.Request, isProd bool, comp templ.Component) {
 	@Layout("Homepage", r, isProd) {
 		<main>
 			@comp
@@ -96,22 +80,25 @@ templ DummyComp() {
 	<div>hey</div>
 }
 
-templ LineGraphLiveData(chartHtml string, chartScript string, htmlSelector string, apiUrl string) {
-		@templ.Raw(chartHtml)
-		@templ.Raw(chartScript)
-		<script type="module">
-			const chartEl = document.querySelector({{htmlSelector}});
-			const chart = echarts.getInstanceByDom(chartEl);
-			
-			async function updateChart() {
-				try {
-					const res = await fetch({{apiUrl}});
-					const json = await res.json()
-					chart.setOption(json, true);
-				} catch (err) {
-					console.log(err)
-				}
-			}
-			setInterval(updateChart, 100)
-		</script>
+templ SystemMemory(chartHtml string, chartScript string, htmlSelector string, apiUrl string) {
+	@templ.Raw(chartHtml)
+	@templ.Raw(chartScript)
+	<script type="module">
+  const chartEl = document.querySelector({{ htmlSelector }});
+  const chart = echarts.getInstanceByDom(chartEl);
+
+  async function updateChart() {
+    try {
+      const res = await fetch({{ apiUrl }});
+      const option = await res.json();
+
+      // Update chart with full option object
+      chart.setOption(option, true);
+    } catch (err) {
+      console.error("Chart update failed:", err);
+    }
+  }
+
+  setInterval(updateChart, 100);
+</script>
 }

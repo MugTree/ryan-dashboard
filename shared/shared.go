@@ -12,42 +12,40 @@ import (
 	"time"
 )
 
-type SensorData struct {
-	Depth int       `db:"depth" json:"depth"`
-	Date  time.Time `db:"date" json:"date"`
+type MemorySample struct {
+	MemoryPercent float64   `json:"memory_percent"`
+	Time          time.Time `json:"time"`
 }
 
 type Sensor struct {
-	Data    []SensorData
+	Data    []MemorySample
 	Mu      sync.Mutex
 	MaxSize int
 }
 
-func NewSensor(maxSize int) Sensor {
-	return Sensor{
-		Data:    make([]SensorData, 0),
-		Mu:      sync.Mutex{},
+func NewSensor(maxSize int) *Sensor {
+	return &Sensor{
+		Data:    make([]MemorySample, 0, maxSize),
 		MaxSize: maxSize,
 	}
 }
 
-func (s *Sensor) AddData(d SensorData) {
+func (s *Sensor) AddData(d MemorySample) {
 	s.Mu.Lock()
 	defer s.Mu.Unlock()
 
 	s.Data = append(s.Data, d)
-
 	if len(s.Data) > s.MaxSize {
 		excess := len(s.Data) - s.MaxSize
 		s.Data = s.Data[excess:]
 	}
 }
 
-func (s *Sensor) GetData() []SensorData {
+func (s *Sensor) GetData() []MemorySample {
 	s.Mu.Lock()
 	defer s.Mu.Unlock()
 
-	dataCopy := make([]SensorData, len(s.Data))
+	dataCopy := make([]MemorySample, len(s.Data))
 	copy(dataCopy, s.Data)
 	return dataCopy
 }
