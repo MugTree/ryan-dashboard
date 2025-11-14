@@ -207,7 +207,7 @@ func logAndError(w http.ResponseWriter, err error) {
 // }
 
 var hashOnce sync.Once
-var appCSSPath, bulmaCSSPath, dataStarPath string
+var appCSSPath, openPropsCSSPath, echartsPath, dataStarPath string
 
 func getHashedPath(path string, assetsPath string, isLive bool) string {
 
@@ -254,8 +254,9 @@ func setAssetPaths(isProd bool) {
 		}
 
 		appCSSPath = getHashedPath(assetsPath+"css/main.css", assetsPath, isProd)
-		bulmaCSSPath = getHashedPath(assetsPath+"css/bulma.css", assetsPath, isProd)
+		openPropsCSSPath = getHashedPath(assetsPath+"css/open-props.css", assetsPath, isProd)
 		dataStarPath = getHashedPath(assetsPath+"js/datastar.js", assetsPath, isProd)
+		echartsPath = getHashedPath(assetsPath+"js/echarts.js", assetsPath, isProd)
 	})
 }
 

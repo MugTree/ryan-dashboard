@@ -11,9 +11,9 @@ templ Layout(title string, r *http.Request, isProd bool) {
 			<title>{ title }</title>
 			<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 			<script type="module" src={ dataStarPath }></script>
-			<link href={ bulmaCSSPath } rel="stylesheet"/>
+			<script src={ echartsPath }></script>
+			<link href={ openPropsCSSPath } rel="stylesheet"/>
 			<link href={ appCSSPath } rel="stylesheet"/>
-			<script src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"></script>
 		</head>
 		<body>
 			@MainMenu(r)
@@ -24,48 +24,14 @@ templ Layout(title string, r *http.Request, isProd bool) {
 }
 
 templ MainMenu(r *http.Request) {
-	<nav class="navbar is-success" data-signals="{burgerMenu: false}">
-		<div class="container">
-			<div class="navbar-brand">
-				//{ getUser(r.Context()).UserName }
-				<a aria-label="Go to our homepage" href="/">
-					<img
-						src="/img/logo2.png"
-						class="site-logo mt-4 mb-3 mr-6"
-						alt="Site log"
-						width="296"
-						height="114"
-					/>
-				</a>
-				<a
-					role="button"
-					data-on:click="$burgerMenu = !$burgerMenu"
-					class="navbar-burger burger"
-					data-class:is-active="$burgerMenu"
-					aria-label="Toggle the mobile navigation"
-				>
-					<span aria-hidden="true"></span>
-					<span aria-hidden="true"></span>
-					<span aria-hidden="true"></span>
-					<span aria-hidden="true"></span>
-				</a>
-			</div>
-			<div class="navbar-menu" data-class:is-active="$burgerMenu" id="mainnav">
-				<div class="navbar-start">
-					<a class="navbar-item" href="/about-us">About</a>
-					<a class="navbar-item" href="/contact-us">Contact</a>
-				</div>
-			</div>
-		</div>
+	<nav>
+		<a href="/about-us">About</a>
+		<a href="/contact-us">Contact</a>
 	</nav>
 }
 
 templ Footer() {
-	<footer class="footer has-background-dark has-text-white">
-		<div class="container has-text-centered-mobile">
-			<span class="copyright has-text-white ">©2025 - Some site</span>
-		</div>
-	</footer>
+	<footer>©2025</footer>
 }
 
 templ HomePage(r *http.Request, isProd bool, comp templ.Component) {

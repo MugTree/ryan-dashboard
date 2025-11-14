@@ -1,6 +1,11 @@
 # Sensors project
 
-Idea here was to create a dashboard that could read data from an external source.
+## moving parts
+
+- go + templ + datastar
+- vanilla js
+- css no framework
+- some sort of open props css
 
 Got a basic POC working where data (fake cpu usage data) comes in from an external api and gets fed through and is and rendered.
 
