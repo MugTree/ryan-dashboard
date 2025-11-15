@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/a-h/templ"
 	"github.com/go-chi/chi/v5"
 )
 
@@ -25,6 +26,13 @@ func webRoutes(r chi.Router, env *EnvVars) {
 		}
 
 		HomePage(r, env.IsProd, chartComponent).Render(r.Context(), w)
+	})
+
+	r.Get("/api/charts/linepart", func(w http.ResponseWriter, r *http.Request) {
+
+		// Note this is a good quick cheat sometimes - the whole component is rendered but we just return a part
+		// useful sometimes
+		templ.RenderFragments(r.Context(), w, DummyComp(), "blah")
 	})
 
 	r.Get("/api/charts/line", func(w http.ResponseWriter, r *http.Request) {

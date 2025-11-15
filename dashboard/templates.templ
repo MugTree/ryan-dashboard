@@ -44,6 +44,9 @@ templ HomePage(r *http.Request, isProd bool, comp templ.Component) {
 
 templ DummyComp() {
 	<div>hey</div>
+	@templ.Fragment("blah") {
+		<div>asdfasd</div>
+	}
 }
 
 templ SystemMemory(chartHtml string, chartScript string, htmlSelector string, apiUrl string) {

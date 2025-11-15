@@ -65,34 +65,37 @@ func run() error {
 	logger := slog.New(handler)
 	slog.SetDefault(logger)
 
-	ctx, stop := signal.NotifyContext(context.Background(), syscall.SIGTERM, syscall.SIGINT)
-	defer stop()
+	{ //setup the server
 
-	s := dashboard.NewServer(host, &env)
+		ctx, stop := signal.NotifyContext(context.Background(), syscall.SIGTERM, syscall.SIGINT)
+		defer stop()
 
-	// Use an errgroup to wait for separate goroutines which can error
-	eg, ctx := errgroup.WithContext(ctx)
+		s := dashboard.NewServer(host, &env)
 
-	// Start the server within the errgroup.
-	eg.Go(func() error {
-		return s.Start()
-	})
+		// Use an errgroup to wait for separate goroutines which can error
+		eg, ctx := errgroup.WithContext(ctx)
 
-	// Wait for the context to be done, which happens when a signal is caught
-	<-ctx.Done()
-	slog.Info("Stopping the app")
+		// Start the server within the errgroup.
+		eg.Go(func() error {
+			return s.Start()
+		})
 
-	// Stop the server gracefully
-	eg.Go(func() error {
-		return s.Stop()
-	})
+		// Wait for the context to be done, which happens when a signal is caught
+		<-ctx.Done()
+		slog.Info("Stopping the app")
 
-	// Wait for the server to stop
-	if err := eg.Wait(); err != nil {
-		return fmt.Errorf("wait group error: %v", err)
+		// Stop the server gracefully
+		eg.Go(func() error {
+			return s.Stop()
+		})
+
+		// Wait for the server to stop
+		if err := eg.Wait(); err != nil {
+			return fmt.Errorf("wait group error: %v", err)
+		}
+
+		slog.Info("Stopped the app")
 	}
-
-	slog.Info("Stopped the app")
 
 	return nil
 }
