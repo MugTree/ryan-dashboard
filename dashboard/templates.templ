@@ -7,13 +7,12 @@ templ Layout(title string, r *http.Request, isProd bool) {
 	<!DOCTYPE html>
 	<html>
 		<head>
-			{{ setAssetPaths(isProd) }}
 			<title>{ title }</title>
 			<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-			<script type="module" src={ dataStarPath }></script>
-			<script src={ echartsPath }></script>
-			<link href={ openPropsCSSPath } rel="stylesheet"/>
-			<link href={ appCSSPath } rel="stylesheet"/>
+			<script type="module" src={  StaticPath("js/datastar.js")  }></script>
+			<script src={ StaticPath("js/echarts.js") }></script>
+			<link href={ StaticPath("css/open-props.css")  } rel="stylesheet"/>
+			<link href={ StaticPath("css/styles.css")  } rel="stylesheet"/>
 		</head>
 		<body>
 			@MainMenu(r)
