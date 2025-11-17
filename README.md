@@ -3,9 +3,7 @@
 ## moving parts
 
 - go + templ + datastar
-- vanilla js
-- css no framework
-- some sort of open props css
+- daisy ui and tailwind
 
 Got a basic POC working where data (fake cpu usage data) comes in from an external api and gets fed through and is and rendered.
 
