@@ -8,29 +8,47 @@ templ Layout(title string, r *http.Request, isProd bool) {
 	<html>
 		<head>
 			<title>{ title }</title>
-      <meta charset="UTF-8" />
+			<meta charset="UTF-8"/>
 			<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-			<script type="module" src={  StaticPath("js/datastar.js")  }></script>
+			<script type="module" src={ StaticPath("js/datastar.js") }></script>
 			<script src={ StaticPath("js/echarts.js") }></script>
-			<link href={ StaticPath("css/output.css")  } rel="stylesheet"/>
+			<link href={ StaticPath("css/output.css") } rel="stylesheet"/>
 		</head>
 		<body class="h-screen bg-base-200">
-			@MainMenu(r)
-			{ children... }
-			@Footer()
+			<div class="flex h-full">
+				<!-- sidebar -->
+				<aside class="w-64 bg-base-100 border-r border-base-300 flex flex-col">
+					<a href="/about-us">About</a>
+					<a href="/contact-us">Contact</a>
+				</aside>
+				<!-- main col-->
+				<div class="flex flex-col flex-1">
+					<!-- topbar -->
+					<div class="navbar bg-base-100 border-b border-base-300 px-6">
+						<div class="flex-1">
+							<a class="text-lg font-semibold">Chat Interface</a>
+						</div>
+						<div class="flex-none">
+							<button
+								class="btn btn-sm"
+								onclick="document.documentElement.dataset.theme =
+                     document.documentElement.dataset.theme === 'dark'
+                       ? 'light'
+                       : 'dark'"
+							>
+								Theme
+							</button>
+						</div>
+					</div>
+					<!-- main content -->
+					<main class="flex-1 overflow-y-auto p-6 space-y-4">
+						{ children... }
+					</main>
+					<footer>©2025</footer>
+				</div>
+			</div>
 		</body>
 	</html>
-}
-
-templ MainMenu(r *http.Request) {
-	<nav>
-		<a href="/about-us">About</a>
-		<a href="/contact-us">Contact</a>
-	</nav>
-}
-
-templ Footer() {
-	<footer>©2025</footer>
 }
 
 templ HomePage(r *http.Request, isProd bool, comp templ.Component) {
@@ -72,83 +90,84 @@ templ SystemMemory(chartHtml string, chartScript string, htmlSelector string, ap
 }
 
 templ DaisyPage() {
-
 	<!DOCTYPE html>
-<html lang="en" data-theme="light">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<link href={ StaticPath("css/output.css")  } rel="stylesheet"/>
-  <title>DaisyUI ChatGPT Layout</title>
-</head>
-<body class="h-screen bg-base-200">
-  <div class="flex h-full">
-    <!-- SIDEBAR -->
-    <aside class="w-64 bg-base-100 border-r border-base-300 flex flex-col">
-      <!-- App Title -->
-      <div class="p-4 text-xl font-bold">
-        My App
-      </div>
-      <!-- Navigation -->
-      <ul class="menu p-2 flex-1">
-        <li><a class="active">Home</a></li>
-        <li><a>Chat</a></li>
-        <li><a>Settings</a></li>
-      </ul>
-      <!-- Bottom -->
-      <div class="p-4">
-        <button class="btn btn-neutral w-full">Logout</button>
-      </div>
-    </aside>
-    <!-- MAIN PANEL -->
-    <div class="flex flex-col flex-1">
-      <!-- TOP NAVBAR -->
-      <div class="navbar bg-base-100 border-b border-base-300 px-6">
-        <div class="flex-1">
-          <a class="text-lg font-semibold">Chat Interface</a>
-        </div>
-        <div class="flex-none">
-          <button class="btn btn-sm"
-            onclick="document.documentElement.dataset.theme =
+	<html lang="en" data-theme="light">
+		<head>
+			<meta charset="UTF-8"/>
+			<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+			<link href={ StaticPath("css/output.css") } rel="stylesheet"/>
+			<title>DaisyUI ChatGPT Layout</title>
+		</head>
+		<body class="h-screen bg-base-200">
+			<div class="flex h-full">
+				<!-- SIDEBAR -->
+				<aside class="w-64 bg-base-100 border-r border-base-300 flex flex-col">
+					<!-- App Title -->
+					<div class="p-4 text-xl font-bold">
+						My App
+					</div>
+					<!-- Navigation -->
+					<ul class="menu p-2 flex-1">
+						<li><a class="active">Home</a></li>
+						<li><a>Chat</a></li>
+						<li><a>Settings</a></li>
+					</ul>
+					<!-- Bottom -->
+					<div class="p-4">
+						<button class="btn btn-neutral w-full">Logout</button>
+					</div>
+				</aside>
+				<!-- MAIN PANEL -->
+				<div class="flex flex-col flex-1">
+					<!-- TOP NAVBAR -->
+					<div class="navbar bg-base-100 border-b border-base-300 px-6">
+						<div class="flex-1">
+							<a class="text-lg font-semibold">Chat Interface</a>
+						</div>
+						<div class="flex-none">
+							<button
+								class="btn btn-sm"
+								onclick="document.documentElement.dataset.theme =
                      document.documentElement.dataset.theme === 'dark'
                        ? 'light'
-                       : 'dark'">
-            Theme
-          </button>
-        </div>
-      </div>
-      <!-- MAIN CONTENT (scrollable area like ChatGPT messages) -->
-      <main class="flex-1 overflow-y-auto p-6 space-y-4">
-        <!-- Example Chat Messages -->
-        <div class="chat chat-start">
-          <div class="chat-bubble">
-            Hello! How can I help you today?
-          </div>
-        </div>
-        <div class="chat chat-end">
-          <div class="chat-bubble chat-bubble-primary">
-            Can you give me a Tailwind layout?
-          </div>
-        </div>
-        <div class="chat chat-start">
-          <div class="chat-bubble">
-            Sure! Here's a DaisyUI version.
-          </div>
-        </div>
-      </main>
-      <!-- BOTTOM INPUT BAR -->
-      <footer class="border-t border-base-300 bg-base-100 p-4">
-        <div class="flex items-center gap-2">
-          <input 
-            type="text"
-            class="input input-bordered w-full"
-            placeholder="Send a message..."
-          >
-          <button class="btn btn-primary">Send</button>
-        </div>
-      </footer>
-    </div>
-  </div>
-</body>
-</html>
+                       : 'dark'"
+							>
+								Theme
+							</button>
+						</div>
+					</div>
+					<!-- MAIN CONTENT (scrollable area like ChatGPT messages) -->
+					<main class="flex-1 overflow-y-auto p-6 space-y-4">
+						<!-- Example Chat Messages -->
+						<div class="chat chat-start">
+							<div class="chat-bubble">
+								Hello! How can I help you today?
+							</div>
+						</div>
+						<div class="chat chat-end">
+							<div class="chat-bubble chat-bubble-primary">
+								Can you give me a Tailwind layout?
+							</div>
+						</div>
+						<div class="chat chat-start">
+							<div class="chat-bubble">
+								Sure! Here's a DaisyUI version.
+							</div>
+						</div>
+					</main>
+					<!-- BOTTOM INPUT BAR -->
+					<footer class="border-t border-base-300 bg-base-100 p-4">
+						<div class="flex items-center gap-2">
+							<input
+								type="text"
+								class="input input-bordered w-full"
+								placeholder="Send a message..."
+							/>
+							<button class="btn btn-primary">Send</button>
+						</div>
+					</footer>
+				</div>
+			</div>
+		</body>
+	</html>
 }
