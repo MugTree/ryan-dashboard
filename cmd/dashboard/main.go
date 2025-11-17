@@ -8,8 +8,8 @@ import (
 	"os/signal"
 	"syscall"
 
-	"github.com/MugTree/ryan_dashboard/dashboard"
 	"github.com/MugTree/ryan_dashboard/shared"
+	dashboard "github.com/MugTree/ryan_dashboard/www"
 
 	_ "embed"
 

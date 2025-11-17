@@ -1,4 +1,4 @@
-package dashboard
+package www
 
 import (
 	"github.com/MugTree/ryan_dashboard/shared"
