@@ -12,6 +12,10 @@ var sensorApiErrStr = "error calling sensor api: %v"
 
 func webRoutes(r chi.Router, env *EnvVars) {
 
+	r.Get("/daisy", func(w http.ResponseWriter, r *http.Request) {
+		DaisyPage().Render(r.Context(), w)
+	})
+
 	r.Get("/", func(w http.ResponseWriter, r *http.Request) {
 
 		data, err := getSensorData(env.SensorAddress)
