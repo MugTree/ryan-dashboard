@@ -9,7 +9,7 @@ import (
 	"syscall"
 
 	"github.com/MugTree/ryan_dashboard/shared"
-	dashboard "github.com/MugTree/ryan_dashboard/www"
+	"github.com/MugTree/ryan_dashboard/www"
 
 	_ "embed"
 
@@ -44,7 +44,7 @@ func run() error {
 		}
 	}
 
-	env := dashboard.EnvVars{
+	env := www.EnvVars{
 		IsProd:        shared.MustEnvGetBool("IS_PRODUCTION"),
 		LogLocation:   shared.MustEnv("APP_LOG"),
 		SensorAddress: shared.MustEnv("SENSOR_ADDRESS"),
@@ -70,7 +70,7 @@ func run() error {
 		ctx, stop := signal.NotifyContext(context.Background(), syscall.SIGTERM, syscall.SIGINT)
 		defer stop()
 
-		s := dashboard.NewServer(host, &env)
+		s := www.NewServer(host, &env)
 
 		// Use an errgroup to wait for separate goroutines which can error
 		eg, ctx := errgroup.WithContext(ctx)
