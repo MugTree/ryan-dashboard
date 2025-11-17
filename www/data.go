@@ -7,7 +7,6 @@ import (
 	"github.com/go-echarts/go-echarts/v2/opts"
 	"github.com/go-echarts/go-echarts/v2/render"
 	"github.com/go-echarts/go-echarts/v2/types"
-	"github.com/goforj/godump"
 )
 
 const QueryParamsError = "query params error"
@@ -35,8 +34,6 @@ func getSystemMemoryChartData(data []shared.MemorySample, chartId string) render
 			Value: [2]any{x, v.MemoryPercent}, // [x,y] pair for numeric X
 		})
 	}
-
-	godump.Dump(points)
 
 	line := charts.NewLine()
 	line.SetGlobalOptions(

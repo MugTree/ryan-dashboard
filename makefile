@@ -5,13 +5,16 @@ production-build-www:
 	GOOS=linux GOARCH=amd64  go build -o bin/ryan_dashboard.amd64 ./cmd/dashboard
 
 start-dev: tmp 
-	make -j 3  templ serve sync_assets
+	make -j 3  templ serve tailwind sync_assets
 
 format-html:
 	templ fmt ./www 
 
 templ:
 	templ generate --watch --proxy="http://localhost:8080" --open-browser=false  -v
+
+tailwind:
+	npx --yes tailwindcss -i ./app.css -o ./www/public/css/output.css --minify --watch
 
 serve:
 	air \

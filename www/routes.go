@@ -4,17 +4,12 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/a-h/templ"
 	"github.com/go-chi/chi/v5"
 )
 
 var sensorApiErrStr = "error calling sensor api: %v"
 
 func webRoutes(r chi.Router, env *EnvVars) {
-
-	r.Get("/daisy", func(w http.ResponseWriter, r *http.Request) {
-		DaisyPage().Render(r.Context(), w)
-	})
 
 	r.Get("/", func(w http.ResponseWriter, r *http.Request) {
 
@@ -34,9 +29,7 @@ func webRoutes(r chi.Router, env *EnvVars) {
 
 	r.Get("/api/charts/linepart", func(w http.ResponseWriter, r *http.Request) {
 
-		// Note this is a good quick cheat sometimes - the whole component is rendered but we just return a part
-		// useful sometimes
-		templ.RenderFragments(r.Context(), w, DummyComp(), "blah")
+		// templ.RenderFragments(r.Context(), w, DummyComp(), "blah")
 	})
 
 	r.Get("/api/charts/line", func(w http.ResponseWriter, r *http.Request) {
@@ -48,12 +41,7 @@ func webRoutes(r chi.Router, env *EnvVars) {
 		}
 
 		chartData := getSystemMemoryChartData(data, "depths_chart")
-
 		w.Header().Set("Content-Type", "application/json")
-
-		fmt.Println("---------------------------------")
-		fmt.Println(chartData.Option)
-		fmt.Println("---------------------------------")
 		w.Write([]byte(chartData.Option))
 	})
 
