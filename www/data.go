@@ -18,8 +18,6 @@ const SensorApiError = "sensor api error"
 
 const NoPageToEdit int64 = 0
 
-const AssetsPathDev = "./dashboard/public/"
-const AssetsPathProd = "/"
 const DateLayout string = "2006-01-02 15:04:05"
 
 func getSystemMemoryChartData(data []shared.MemorySample, chartId string) render.ChartSnippet {
