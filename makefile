@@ -1,8 +1,8 @@
 build-www:
-	go build -o bin/ryan_dashboard ./cmd/dashboard
+	go build -o bin/ryan_dashboard ./cmd/www
 
 production-build-www:
-	GOOS=linux GOARCH=amd64  go build -o bin/ryan_dashboard.amd64 ./cmd/dashboard
+	GOOS=linux GOARCH=amd64  go build -o bin/ryan_dashboard.amd64 ./cmd/www
 
 start-dev: tmp 
 	make -j 3  templ serve tailwind sync_assets
@@ -18,7 +18,7 @@ tailwind:
 
 serve:
 	air \
-  --build.cmd "go build -o tmp/bin/ryan_dashboard ./cmd/dashboard " --build.bin "tmp/bin/ryan_dashboard" --build.delay "100" \
+  --build.cmd "go build -o tmp/bin/ryan_dashboard ./cmd/www " --build.bin "tmp/bin/ryan_dashboard" --build.delay "100" \
   --build.exclude_dir "node_modules" \
   --build.include_ext "go,env,html" \
   --build.stop_on_error "false" \
