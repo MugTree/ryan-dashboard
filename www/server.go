@@ -7,10 +7,12 @@ import (
 	"fmt"
 	"log/slog"
 	"net/http"
+	"sync"
 	"time"
 
 	"github.com/benbjohnson/hashfs"
 	"github.com/go-chi/chi/v5"
+	"github.com/starfederation/datastar-go/datastar"
 )
 
 //go:embed public/*
@@ -64,6 +66,8 @@ func (s *Server) Start() error {
 
 		router.Handle("/public/*", hashfs.FileServer(StaticSys))
 
+		router.Get("/hotreload", hotReload())
+
 		webRoutes(router, s.env)
 
 		router.NotFound(func(w http.ResponseWriter, r *http.Request) {
@@ -101,4 +105,15 @@ func logAndError(w http.ResponseWriter, err error) {
 
 func formatError(prefix string, r *http.Request, err error) error {
 	return fmt.Errorf(prefix+" - url:%v error:%v", chi.RouteContext(r.Context()).RoutePattern(), err)
+}
+
+func hotReload() http.HandlerFunc {
+	var hotReloadOnlyOnce sync.Once
+	return func(w http.ResponseWriter, r *http.Request) {
+		sse := datastar.NewSSE(w, r)
+		hotReloadOnlyOnce.Do(func() {
+			sse.ExecuteScript("window.location.reload()")
+		})
+		<-r.Context().Done()
+	}
 }

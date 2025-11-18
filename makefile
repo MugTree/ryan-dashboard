@@ -1,11 +1,11 @@
 build-www:
-	go build -o bin/ryan_dashboard ./cmd/www
+	go build -o bin/ryan_app ./cmd/www
 
 production-build-www:
-	GOOS=linux GOARCH=amd64  go build -o bin/ryan_dashboard.amd64 ./cmd/www
+	GOOS=linux GOARCH=amd64  go build -o bin/ryan_app.amd64 ./cmd/www
 
 start-dev: tmp 
-	make -j 3  templ serve tailwind sync_assets
+	make -j 4  templ serve tailwind sync_assets
 
 format-html:
 	templ fmt ./www 
@@ -14,11 +14,11 @@ templ:
 	templ generate --watch --proxy="http://localhost:8080" --open-browser=false  -v
 
 tailwind:
-	npx --yes tailwindcss -i ./app.css -o ./www/public/css/output.css --minify --watch
+	npx --yes tailwindcss -i ./input.css -o ./www/public/css/output.css --minify --watch
 
 serve:
 	air \
-  --build.cmd "go build -o tmp/bin/ryan_dashboard ./cmd/www " --build.bin "tmp/bin/ryan_dashboard" --build.delay "100" \
+  --build.cmd "go build -o tmp/bin/ryan_app ./cmd/www " --build.bin "tmp/bin/ryan_app" --build.delay "100" \
   --build.exclude_dir "node_modules" \
   --build.include_ext "go,env,html" \
   --build.stop_on_error "false" \

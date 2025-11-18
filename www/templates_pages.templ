@@ -1,0 +1,19 @@
+package www
+
+import "net/http"
+
+templ HomePage(r *http.Request, isProd bool, comp templ.Component) {
+	@Layout("Homepage", r, isProd) {
+		<div class="hidden">
+			@comp
+		</div>
+	}
+}
+
+templ NotesPage(r *http.Request, isProd bool) {
+	@Layout("Notes", r, isProd) {
+		<div>These are some notes</div>
+	}
+}
+
+// quite dynamic

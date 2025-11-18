@@ -1,0 +1,21 @@
+package www
+
+templ SystemMemory(chartHtml string, chartScript string, htmlSelector string, apiUrl string) {
+	@templ.Raw(chartHtml)
+	@templ.Raw(chartScript)
+	// 	<script type="module">
+	//   const chartEl = document.querySelector({{ htmlSelector }});
+	//   const chart = echarts.getInstanceByDom(chartEl);
+	//   async function updateChart() {
+	//     try {
+	//       const res = await fetch({{ apiUrl }});
+	//       const option = await res.json();
+	//       // Update chart with full option object
+	//       chart.setOption(option, true);
+	//     } catch (err) {
+	//       console.error("Chart update failed:", err);
+	//     }
+	//   }
+	//   setInterval(updateChart, 100);
+	// </script>
+}

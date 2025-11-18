@@ -13,6 +13,7 @@ func webRoutes(r chi.Router, env *EnvVars) {
 
 	r.Get("/", func(w http.ResponseWriter, r *http.Request) {
 
+		//
 		data, err := getSensorData(env.SensorAddress)
 		if err != nil {
 			logAndError(w, formatError(SensorApiError, r, fmt.Errorf(sensorApiErrStr, err)))
@@ -22,9 +23,14 @@ func webRoutes(r chi.Router, env *EnvVars) {
 		chartComponent, err := getSystemMemoryComponent(data, "depths_chart")
 		if err != nil {
 			logAndError(w, formatError(BadDataError, r, err))
+			return
 		}
 
 		HomePage(r, env.IsProd, chartComponent).Render(r.Context(), w)
+	})
+
+	r.Get("/notes", func(w http.ResponseWriter, r *http.Request) {
+		NotesPage(r, false).Render(r.Context(), w)
 	})
 
 	r.Get("/api/charts/linepart", func(w http.ResponseWriter, r *http.Request) {

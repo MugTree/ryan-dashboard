@@ -1,0 +1,52 @@
+package www
+
+import "net/http"
+
+templ Layout(title string, r *http.Request, isProd bool) {
+	<!DOCTYPE html>
+	<html>
+		<head>
+			<title>{ title }</title>
+			<meta charset="UTF-8"/>
+			<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+			<script type="module" src={ StaticPath("js/datastar.js") }></script>
+			<script src={ StaticPath("js/echarts.js") }></script>
+			<link href={ StaticPath("css/output.css") } rel="stylesheet"/>
+		</head>
+		<body>
+			<div class="flex flex-col md:flex-row gap-4 h-screen ">
+				<aside class="md:w-1/4 bg-blue-200 p-4">
+					<div>
+						<h1>App</h1>
+					</div>
+					<ul>
+						<li><a href="/">Home</a></li>
+						<li><a href="/notes">Notes</a></li>
+					</ul>
+				</aside>
+				<div class="md:w-3/4 bg-red-200 p-4">
+					<div class="content-header">
+						<div>
+							Chat Interface
+						</div>
+						// 	<div>
+						// 		<button
+						// 			class="btn btn-sm"
+						// 			onclick="document.documentElement.dataset.theme =
+						//  document.documentElement.dataset.theme === 'dark'
+						//    ? 'light'
+						//    : 'dark'"
+						// 		>
+						// 			Themes
+						// 		</button>
+						// 	</div>
+					</div>
+					<main class="content-body" id="content">
+						<p>Some content</p>
+						{ children... }
+					</main>
+				</div>
+			</div>
+		</body>
+	</html>
+}

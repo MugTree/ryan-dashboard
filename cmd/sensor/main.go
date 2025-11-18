@@ -13,6 +13,7 @@ import (
 
 	"github.com/MugTree/ryan_dashboard/shared"
 	"github.com/joho/godotenv"
+	"gopkg.in/natefinch/lumberjack.v2"
 )
 
 /*
@@ -37,49 +38,66 @@ func run() error {
 
 	host := shared.MustEnv("SENSOR_HOST")
 
-	const (
-		updateInterval = 100 * time.Millisecond // 10th of a second
-		windowSeconds  = 10
-	)
-	pointsPerSecond := int(time.Second / updateInterval)
-	maxPoints := pointsPerSecond * windowSeconds
-
-	sensor := shared.NewSensor(maxPoints)
-
-	go func() {
-		start := time.Now()
-		for {
-			t := time.Since(start).Seconds()
-
-			//CGPT Smooth oscillation with small noise
-			// give an impression of 60 percent cpu useish
-			y := 60 + 10*math.Sin(t/2) + (rand.Float64()*4 - 2)
-
-			sensor.AddData(shared.MemorySample{
-				MemoryPercent: y,
-				Time:          time.Now(),
-			})
-
-			time.Sleep(updateInterval)
-		}
-	}()
-
-	mux := http.NewServeMux()
-
-	mux.HandleFunc("/api", func(w http.ResponseWriter, r *http.Request) {
-
-		data := sensor.GetData()
-
-		w.Header().Set("Content-Type", "application/json")
-		if err := json.NewEncoder(w).Encode(data); err != nil {
-			http.Error(w, fmt.Sprintf("encode error: %v", err), http.StatusInternalServerError)
-		}
-	})
-
-	fmt.Println("Server running at " + host + "/api")
-	if err := http.ListenAndServe(host, mux); err != nil {
-		return fmt.Errorf("server error: %v", err)
+	rotator := &lumberjack.Logger{
+		Filename:   shared.MustEnv("SENSOR_LOG"),
+		MaxSize:    50, // MB
+		MaxBackups: 5,
+		MaxAge:     30, // days
+		Compress:   true,
 	}
 
-	return nil
+	handler := slog.NewTextHandler(rotator, &slog.HandlerOptions{Level: slog.LevelInfo})
+
+	logger := slog.New(handler)
+	slog.SetDefault(logger)
+
+	{ // main program
+
+		const (
+			updateInterval = 100 * time.Millisecond // 10th of a second
+			windowSeconds  = 10
+		)
+		pointsPerSecond := int(time.Second / updateInterval)
+		maxPoints := pointsPerSecond * windowSeconds
+
+		sensor := shared.NewSensor(maxPoints)
+
+		go func() {
+			start := time.Now()
+			for {
+				t := time.Since(start).Seconds()
+
+				//CGPT Smooth oscillation with small noise
+				// give an impression of 60 percent cpu useish
+				y := 60 + 10*math.Sin(t/2) + (rand.Float64()*4 - 2)
+
+				sensor.AddData(shared.MemorySample{
+					MemoryPercent: y,
+					Time:          time.Now(),
+				})
+
+				time.Sleep(updateInterval)
+			}
+		}()
+
+		mux := http.NewServeMux()
+
+		mux.HandleFunc("/api", func(w http.ResponseWriter, r *http.Request) {
+
+			data := sensor.GetData()
+
+			w.Header().Set("Content-Type", "application/json")
+			if err := json.NewEncoder(w).Encode(data); err != nil {
+				http.Error(w, fmt.Sprintf("encode error: %v", err), http.StatusInternalServerError)
+			}
+		})
+
+		fmt.Println("Server running at " + host + "/api")
+		if err := http.ListenAndServe(host, mux); err != nil {
+			return fmt.Errorf("server error: %v", err)
+		}
+
+		return nil
+
+	}
 }
